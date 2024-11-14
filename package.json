@@ -2,6 +2,7 @@
   "name": "js-form",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://fairerdata.github.io/maDMP-Generation-Tool",
   "dependencies": {
     "@rjsf/core": "^5.22.3",
     "@rjsf/semantic-ui": "^5.22.3",
@@ -21,6 +22,8 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
