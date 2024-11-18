@@ -32,6 +32,23 @@ function App() {
     link.click();
   };
 
+    // Handle JSON upload
+    const uploadJSON = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            const json = JSON.parse(e.target?.result as string);
+            setFormData(json);
+          } catch (error) {
+            alert('Invalid JSON file.');
+          }
+        };
+        reader.readAsText(file);
+      }
+    };
+
   return (
     <div>
       <Form<FormData>
@@ -41,7 +58,19 @@ function App() {
         formData={formData as any}
         onChange={handleChange}
       />
-      <button onClick={downloadJSON}>Download JSON</button>
+      <button 
+        type="button" 
+        className="btn btn-info " 
+        style={{ marginTop: '10px' }}
+        onClick={downloadJSON}>Download JSON
+      </button>
+
+      <input
+        type="file"
+        accept=".json"
+        onChange={uploadJSON}
+        style={{ marginTop: '10px' }}
+      />
     </div>
   );
 }
