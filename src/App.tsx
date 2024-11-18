@@ -4,7 +4,7 @@ import { RJSFSchema, UiSchema } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
 
 // Import custom schemas and UI schema
-import mySchema from './conditional_appear_affiliation.json';
+import mySchema from './GCWG-RDA-maDMP-schema.json';
 import myUiSchema from './ui_schema.json';
 
 // Define types if you know the structure of formData, otherwise keep it as `any`
@@ -53,7 +53,7 @@ function App() {
     <div>
       <Form<FormData>
         schema={mySchema as unknown as RJSFSchema}
-        //uiSchema={myUiSchema as UiSchema}
+        uiSchema={myUiSchema as UiSchema}
         validator={validator}
         formData={formData as any}
         onChange={handleChange}
