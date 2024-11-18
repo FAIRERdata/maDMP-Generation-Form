@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/maDMP-Generation-Tool/static/css/main.558085e2.css",
-    "main.js": "/maDMP-Generation-Tool/static/js/main.fcee1072.js",
+    "main.css": "/maDMP-Generation-Tool/static/css/main.742186ae.css",
+    "main.js": "/maDMP-Generation-Tool/static/js/main.1879465f.js",
     "static/js/453.415cc477.chunk.js": "/maDMP-Generation-Tool/static/js/453.415cc477.chunk.js",
     "index.html": "/maDMP-Generation-Tool/index.html",
-    "main.558085e2.css.map": "/maDMP-Generation-Tool/static/css/main.558085e2.css.map",
-    "main.fcee1072.js.map": "/maDMP-Generation-Tool/static/js/main.fcee1072.js.map",
+    "main.742186ae.css.map": "/maDMP-Generation-Tool/static/css/main.742186ae.css.map",
+    "main.1879465f.js.map": "/maDMP-Generation-Tool/static/js/main.1879465f.js.map",
     "453.415cc477.chunk.js.map": "/maDMP-Generation-Tool/static/js/453.415cc477.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.558085e2.css",
-    "static/js/main.fcee1072.js"
+    "static/css/main.742186ae.css",
+    "static/js/main.1879465f.js"
   ]
 }
