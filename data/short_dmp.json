@@ -1,0 +1,108 @@
+
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://github.com/FAIRERdata/maDMP-Standard/blob/Master/examples/JSON/GCWG-RDA-maDMP JSON-schema/GCWG-RDA-maDMP-schema.json",
+    "title": "GCWG-RDA-maDMP-Schema",
+    "type": "object",
+    "properties": {
+        "dmp": {
+            "$id": "#/properties/dmp",
+            "type": "object",
+            "title": "The Dmp Schema",
+            "properties": {
+                "access": {
+                    "type": "string",
+                    "description": "OPEN ACCESS: available to anyone based on an open license (e.g., CC0, CC-BY, Open Government License). SHARED ACCESS: Public access with a license that limits use, that is available to anyone under terms and conditions that are not ‘open' (e.g., CC-BY-NC), shared only with named people or organisations, or via authentication for specific groups that meet certain criteria. CLOSED ACCESS: Internal access only. https://theodi.org/insights/tools/the-data-spectrum/ ; https://www.alerc.org.uk/uploads/7/6/3/3/7633190/an_introduction_to_open_shared_and_closed_data.pdf",
+                    "enum": [
+                        "open",
+                        "shared",
+                        "closed"
+                    ],
+                    "example": "open",
+                    "question": "Is access to the maDMP open, shared, or closed?",
+                    "$id": "#/properties/dmp/properties/access",
+                    "title": "The Access Schema"
+                },
+                "approval": {
+                    "type": "object",
+                    "description": "Approval of the maDMP",
+                    "$id": "#/properties/dmp/properties/approval",
+                    "title": "The Approval Schema",
+                    "properties": {
+                        "by_mbox": {
+                            "type": "string",
+                            "description": "Email of the person who approved the maDMP",
+                            "question": "What is the approval person's email?",
+                            "format": "email",
+                            "$id": "#/properties/dmp/properties/approval/properties/by_mbox",
+                            "title": "The By_mbox Schema"
+                        },
+                        "by_name": {
+                            "type": "string",
+                            "description": "Name of the person who approved the maDMP",
+                            "question": "What is the name of the approval person?",
+                            "$id": "#/properties/dmp/properties/approval/properties/by_name",
+                            "title": "The By_name Schema"
+                        },
+                        "by_position": {
+                            "type": "string",
+                            "description": "Job position of the person who approved the maDMP",
+                            "example": "Director",
+                            "question": "What is the position of the approval person?",
+                            "$id": "#/properties/dmp/properties/approval/properties/by_position",
+                            "title": "The By_position Schema"
+                        },
+                        "date": {
+                            "type": "string",
+                            "description": "DMP Approval date. Encoded using the relevant ISO 8601 Date <a href=\"https://www.w3.org/TR/NOTE-datetime\">compliant string</a>",
+                            "example": "2023-12-31",
+                            "question": "What was the date of the approval action?",
+                            "format": "date",
+                            "$id": "#/properties/dmp/properties/approval/properties/date",
+                            "title": "The Date Schema"
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "To provide any free-form text information on the approval for the DMP",
+                            "example": "Need to respond to all required fields",
+                            "question": "Provide a description of the approval.",
+                            "$id": "#/properties/dmp/properties/approval/properties/description",
+                            "title": "The Description Schema"
+                        },
+                        "status": {
+                            "type": "string",
+                            "description": "Approval status for the DMP",
+                            "enum": [
+                                "approved",
+                                "rejected",
+                                "submitted",
+                                "not submitted",
+                                "not applicable",
+                                "unknown"
+                            ],
+                            "example": "rejected",
+                            "question": "What is the maDMP approval status?",
+                            "$id": "#/properties/dmp/properties/approval/properties/status",
+                            "title": "The Status Schema"
+                        }
+                    },
+                    "required": [
+                        "status"
+                    ],
+                    
+                    "if":{
+                      "properties":{
+                        "status":{"enum":["approved", "rejected", "submitted"]}
+                      },
+                      "required": ["status"]
+                    },
+                    "then": {"required": ["by_name", "by_position", "date"]}
+                    
+                    
+                }
+            },
+            "required":["access", "approval"]
+        }
+    },
+    "required":["dmp"]
+}
