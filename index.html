@@ -1,0 +1,56 @@
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <!-- Bootstrap CDN -->
+        <link
+        rel="stylesheet"
+        href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+        />
+        
+        <!-- Favicon (ensure this is in your public directory) -->
+        <link rel="icon" type="image/x-icon" href="/favicon.png" />
+
+        <meta charset="utf-8" />
+
+        <!-- Vite will handle CSS imports via JS files -->
+        <!-- Remove <style src="../src/index.css"></style>, instead use an import in your React component -->
+
+        <title>maDMP-Generation-Tool</title>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>maDMP-Generation-Tool</h1>
+            <p>
+                maDMP-Generation-Tool is a tool to generate maDMPs for your research data.
+                It is based on the <a href="https://fairerdata.github.io/maDMP-Standard/">maDMP-Standard</a>
+            </p>
+            <p>
+                With this tool, you are able to:
+                <ul>
+                <li>create a new maDMP</li>
+                <li>validate your maDMP using the validation button at the bottom</li>
+                <li>download your maDMP as a JSON file</li>
+                <li>upload a JSON file to edit an existing maDMP</li>
+                </ul>
+            </p>
+            <hr>
+
+            <!-- Root element for React app -->
+            <div id="root"></div>
+            <script type="module" src="/src/main.tsx"></script>
+        </div>
+    </body>
+
+    <!-- Footer with source code link -->
+    <footer>
+        <div>
+        <a
+            id="source_code"
+            class="source_code"
+            href="https://github.com/FAIRERdata/maDMP-Generation-Tool"
+            >Source code</a
+        >
+        </div>
+    </footer>
+    </html>

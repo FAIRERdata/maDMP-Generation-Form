@@ -5,19 +5,17 @@ import validator from '@rjsf/validator-ajv8';
 // Import the CSS file
 import './App.css';
 
-
 function App() {
   const [schema, setSchema] = useState({});
   const [uiSchema, setUiSchema] = useState({});
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
 
   useEffect(() => {
     // Replace with your GitHub raw content URLs if schemas are not in the public folder
-    const schemaUrl = import.meta.env.VITE_PUBLIC_URL + '/data/GCWG-RDA-maDMP-schema.json';
-    const uiSchemaUrl = import.meta.env.VITE_PUBLIC_URL + '/data/ui_schema.json';
+    const schemaUrl = process.env.PUBLIC_URL + '/data/GCWG-RDA-maDMP-schema.json'; // '/data/short_dmp.json';
+    const uiSchemaUrl = process.env.PUBLIC_URL + '/data/ui_schema.json';
 
     Promise.all([
       fetch(schemaUrl).then((res) => res.json()),
@@ -38,9 +36,15 @@ function App() {
       });
   }, []);
 
+  /*
+  const handleChange = ({ formData }: IChangeEvent<any>) => {
+    setFormData(formData);
+  };
+  */
+
   // Handle form data change
   const handleChange = ({ formData }: IChangeEvent<FormData>) => {
-    setFormData(formData as object);
+    setFormData(formData as any);
   };
 
   // Handle JSON upload
