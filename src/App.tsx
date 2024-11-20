@@ -16,8 +16,10 @@ function App() {
 
   useEffect(() => {
     // Replace with your GitHub raw content URLs if schemas are not in the public folder
-    const schemaUrl = import.meta.env.VITE_PUBLIC_URL + '/data/GCWG-RDA-maDMP-schema.json';
-    const uiSchemaUrl = import.meta.env.VITE_PUBLIC_URL + '/data/ui_schema.json';
+    //const schemaUrl = import.meta.env.VITE_PUBLIC_URL + '/data/GCWG-RDA-maDMP-schema.json';
+    //const uiSchemaUrl = import.meta.env.VITE_PUBLIC_URL + '/data/ui_schema.json';
+    const schemaUrl = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/GCWG-RDA-maDMP%20JSON-schema/GCWG-RDA-maDMP-schema.json';
+    const uiSchemaUrl = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/GCWG-RDA-maDMP%20JSON-schema/ui_schema.json';
 
     Promise.all([
       fetch(schemaUrl).then((res) => res.json()),
