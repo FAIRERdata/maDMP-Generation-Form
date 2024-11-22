@@ -1,34 +1,45 @@
 import React, { useState, useEffect } from 'react';
 import Form, { IChangeEvent } from '@rjsf/core';
 import validator from '@rjsf/validator-ajv8';
-
-// Import the CSS file
 import './App.css';
 
-
 function App() {
+  const [schemaList, setSchemaList] = useState<{ name: string; schema: string; uischema: string }[]>([]);
+  const [selectedSchema, setSelectedSchema] = useState<{ name: string; schema: string; uischema: string } | null>(null);
   const [schema, setSchema] = useState({});
   const [uiSchema, setUiSchema] = useState({});
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
+  const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/GCWG-RDA-maDMP%20JSON-schema/';
+  const schemasUrl = folder_path + 'schema_metadata.json';
 
   useEffect(() => {
-    // Replace with your GitHub raw content URLs if schemas are not in the public folder
-    //const schemaUrl = import.meta.env.VITE_PUBLIC_URL + '/data/GCWG-RDA-maDMP-schema.json';
-    //const uiSchemaUrl = import.meta.env.VITE_PUBLIC_URL + '/data/ui_schema.json';
-    const schemaUrl = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/GCWG-RDA-maDMP%20JSON-schema/GCWG-RDA-maDMP-schema.json';
-    const uiSchemaUrl = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/GCWG-RDA-maDMP%20JSON-schema/ui_schema.json';
+    fetch(schemasUrl)
+      .then((res) => res.json())
+      .then((data) => {
+        setSchemaList(data);
+        setSelectedSchema(data[0]);
+      })
+      .catch((err) => {
+        console.error(err);
+        setError('Failed to load schema metadata.');
+      });
+  }, []);
 
-    Promise.all([
-      fetch(schemaUrl).then((res) => res.json()),
-      fetch(uiSchemaUrl).then((res) => res.json())
-    ])
+  useEffect(() => {
+    if (!selectedSchema) return;
+
+    setLoading(true);
+    setError(null);
+
+    const schemaUrl = folder_path + selectedSchema.schema;
+    const uiSchemaUrl = folder_path + selectedSchema.uischema;
+
+    Promise.all([fetch(schemaUrl).then((res) => res.json()), fetch(uiSchemaUrl).then((res) => res.json())])
       .then(([schemaData, uiSchemaData]) => {
-        uiSchemaData["ui:submitButtonOptions"] = {
-          submitText: 'Validate'
-        };
+        uiSchemaData['ui:submitButtonOptions'] = { submitText: 'Validate' };
         setSchema(schemaData);
         setUiSchema(uiSchemaData);
         setLoading(false);
@@ -38,12 +49,7 @@ function App() {
         setError('Failed to load schema.');
         setLoading(false);
       });
-  }, []);
-
-  // Handle form data change
-  const handleChange = ({ formData }: IChangeEvent<FormData>) => {
-    setFormData(formData as object);
-  };
+  }, [selectedSchema]);
 
   // Handle JSON upload
   const uploadJSON = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,39 +77,53 @@ function App() {
     link.click();
   };
 
-  if (loading) {
-    return <div>Loading form...</div>;
-  }
+  // Handle form data change
+  const handleChange = ({ formData }: IChangeEvent<FormData>) => {
+    setFormData(formData as object);
+  };
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  if (!schemaList.length && !error) return <div>Loading schema list...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
-    <div>
-      <Form
-        schema={schema}
-        uiSchema={uiSchema}
-        validator={validator}
-        formData={formData as any}
-        onChange={handleChange}
-      />
+    <div className="form-container">
+      <div className="dropdown">
+        <label htmlFor="schema-select">Choose a schema: </label>
+        <select
+          id="schema-select"
+          value={selectedSchema?.name || ''}
+          onChange={(e) => {
+            const selected = schemaList.find((s) => s.name === e.target.value);
+            if (selected) setSelectedSchema(selected);
+          }}
+        >
+          <option value="" disabled>
+            Select a schema
+          </option>
+          {schemaList.map((s) => (
+            <option key={s.name} value={s.name}>
+              {s.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      <button
-        type="button"
-        className="btn btn-info"
-        style={{ marginTop: '10px' }}
-        onClick={downloadJSON}
-      >
-        Download JSON
-      </button>
+      {selectedSchema && (
+        <Form
+          schema={schema}
+          uiSchema={uiSchema}
+          validator={validator}
+          formData={formData as any}
+          onChange={handleChange}
+        />
+      )}
 
-      <input
-        type="file"
-        accept=".json"
-        onChange={uploadJSON}
-        style={{ marginTop: '10px' }}
-      />
+      <div>
+        <button type="button" className="btn btn-info" onClick={downloadJSON}>
+          Download JSON
+        </button>
+        <input type="file" accept=".json" onChange={uploadJSON} />
+      </div>
 
       {/* Floating Side Panel */}
       <div className="side-panel">
@@ -124,10 +144,11 @@ function App() {
         />
 
         <a id="source_code" className="source_code" href="https://github.com/FAIRERdata/maDMP-Generation-Tool">Source code</a>
-      </div>    
-
+      </div>  
     </div>
   );
 }
+
+
 
 export default App;

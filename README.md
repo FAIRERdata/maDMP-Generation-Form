@@ -1,50 +1,20 @@
-# React + TypeScript + Vite
+# GCWG-RDA maDMP Generation Form
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+maDMP-Generation-Tool is a tool to generate maDMPs for your research data.
+It is based on the <a href="https://fairerdata.github.io/maDMP-Standard/">maDMP-Standard</a>. This tool converts [GCWG-RDA-maDMP-schema.json](https://github.com/FAIRERdata/maDMP-Standard/blob/Master/examples/JSON/GCWG-RDA-maDMP%20JSON-schema/GCWG-RDA-maDMP-schema.json) to a web form using the [react-jsonschema-form ](https://rjsf-team.github.io/react-jsonschema-form/docs/) library.
+<p>
+    With this tool, you are able to:
+    <ul>
+    <li>create a new maDMP</li>
+    <li>validate your maDMP using the validation button at the bottom</li>
+    <li>download your maDMP as a JSON file</li>
+    <li>upload a JSON file to edit an existing maDMP</li>
+    </ul>
+</p>
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# update form
 
-## Expanding the ESLint configuration
+To update the form, you either have to update the JSON schema [here](https://github.com/FAIRERdata/maDMP-Standard/blob/Master/examples/JSON/GCWG-RDA-maDMP%20JSON-schema/GCWG-RDA-maDMP-schema.json), or change the fetch link in src/App.tsx
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+To update the 
