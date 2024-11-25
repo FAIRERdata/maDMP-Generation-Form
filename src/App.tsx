@@ -82,8 +82,6 @@ function App() {
     setFormData(formData as object);
   };
 
-  if (!schemaList.length && !error) return <div>Loading schema list...</div>;
-  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="form-container">
@@ -108,7 +106,11 @@ function App() {
         </select>
       </div>
 
-      {selectedSchema && (
+      {/* Display error message */}
+      {error && <div className="error-message">Error: {error}</div>}
+
+      {/* Display form if no error */}
+      {selectedSchema && !error && (
         <Form
           schema={schema}
           uiSchema={uiSchema}
