@@ -1,7 +1,41 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* Other container */
+.container {
+  max-width: 650px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  background-color: #fff;
+  margin-top: 20px;
+  word-wrap: break-word; /* Break long words */
+  word-break: break-word; /* Break long words */
+  overflow-wrap: break-word; /* Break long words */
+}
+
+.source_code{
+  margin-top: 20px;
+  display: block;
+  text-align: center;
+}
+
+/* Side Panel */
 .side-panel {
     position: fixed;
     top: 20%;
-    right: 20px;
+    right: 60px;
     width: 150px;
     padding: 10px;
     background-color: #f8f9fa;
@@ -28,11 +62,18 @@
 input[type='file'] {
     margin-top: 10px;
 }
+
+/* Form container */
 .form-container {
-    max-width: 800px;
+    max-width: 650px;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    margin: auto;
+    word-wrap: break-word; /* Break long words */
+    word-break: break-word; /* Break long words */
+    overflow-wrap: break-word; /* Break long words */
 }
 .dropdown {
     position: relative;
@@ -40,4 +81,68 @@ input[type='file'] {
     max-width: 800px;
     padding: 20px;
     border-radius: 8px;
+}
+
+/* Table of Contents */
+.toc {
+    position: fixed;
+    top: 0%;
+    left: 10px;
+    max-width: 250px; /* Maximum width */
+    min-width: 150px; /* Minimum width */
+    background-color: rgba(249, 249, 249, 0.8);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    max-height: 100vh;
+    overflow-y: auto;
+    overflow-x: auto;
+  }
+
+.toc > ul > li {
+    margin-left: -20px; /* Indent for the highest-level list items */
+    padding-left: 0px;
+}
+.toc h2 {
+  margin-top: 0;
+}
+
+.toc-link {
+  text-decoration: none;
+  color: #007bff;
+  display: block;
+  margin: 3px 0;
+}
+
+.toc-link:hover {
+  text-decoration: underline;
+}
+
+.nested-toc {
+  margin-left: -25px;
+  list-style-type: circle;
+}
+
+/* Hide nested lists by default */
+.toc .nested-toc {
+  display: none;
+}
+
+/* Class to show nested lists */
+.toc .nested-toc.show {
+  display: block;
+}
+
+/* Form Content */
+.form-content {
+  margin-left: 250px; /* Adjust for ToC width */
+  padding: 20px;
+}
+
+.form-section {
+  margin-bottom: 40px;
+}
+
+.form-section h3 {
+  margin-bottom: 10px;
 }

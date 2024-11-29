@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 import Form, { IChangeEvent } from '@rjsf/core';
 import validator from '@rjsf/validator-ajv8';
 import './App.css';
+import { jsPDF } from 'jspdf';
 
 function App() {
-  const [schemaList, setSchemaList] = useState<{ name: string; schema: string; uischema: string }[]>([]);
-  const [selectedSchema, setSelectedSchema] = useState<{ name: string; schema: string; uischema: string } | null>(null);
+  const [schemaList, setSchemaList] = useState<{ name_n_version: string; schema: string; uischema: string; toc: string  }[]>([]);
+  const [selectedSchema, setSelectedSchema] = useState<{ name_n_version: string; schema: string; uischema: string; toc: string } | null>(null);
   const [schema, setSchema] = useState({});
   const [uiSchema, setUiSchema] = useState({});
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/GCWG-RDA-maDMP%20JSON-schema/';
+  const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/PublishedSchemas/';
   const schemasUrl = folder_path + 'schema_metadata.json';
 
   useEffect(() => {
@@ -51,6 +52,74 @@ function App() {
       });
   }, [selectedSchema]);
 
+// Updated ToC generation function
+const generateToC = (schema: any, formData: any, parentKey: string = 'root'): JSX.Element[] => {
+  if (!schema || typeof schema !== 'object' || !schema.properties) return [];
+
+  return Object.keys(schema.properties).map((key) => {
+    const fullPath = parentKey ? `${parentKey}_${key}` : key;
+    const property = schema.properties[key];
+    const data = formData ? formData[key] : undefined;
+
+    return (
+      <li key={fullPath}>
+        <a href={`#${fullPath}`} className="toc-link" onClick={(e) => {
+          e.preventDefault();
+          const nestedList = e.currentTarget.nextElementSibling;
+          if (nestedList) {
+            nestedList.classList.toggle('show');
+          }
+          // Delay the default behavior to allow the toggle to complete
+          setTimeout(() => {
+            window.location.hash = fullPath;
+          }, 100);
+        }}>
+          {key}
+        </a>
+        {/* If it's an object, recurse */}
+        {property.type === 'object' && property.properties && (
+          <ul className="nested-toc">
+            {generateToC(property, data, fullPath)}
+          </ul>
+        )}
+        {/* If it's an array, list its items */}
+        {property.type === 'array' && Array.isArray(data) && (
+          <ul className="nested-toc">
+            {data.map((item: any, index: number) => (
+              <li key={`${fullPath}_${index}`}>
+                <a href={`#${fullPath}_${index}`} className="toc-link" onClick={(e) => {
+                  e.preventDefault();
+                  const nestedList = e.currentTarget.nextElementSibling;
+                  if (nestedList) {
+                    nestedList.classList.toggle('show');
+                  }
+                  // Delay the default behavior to allow the toggle to complete
+                  setTimeout(() => {
+                    window.location.hash = `${fullPath}_${index}`;
+                  }, 100);
+                }}>
+                  {`${key} [${index + 1}]`}
+                </a>
+                {property.items.type === 'object' && property.items.properties && (
+                  <ul className="nested-toc">
+                    {generateToC(property.items, item, `${fullPath}_${index}`)}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+        )}
+      </li>
+    );
+  });
+};
+
+// Handle form data change
+const handleChange = ({ formData }: IChangeEvent<FormData>) => {
+  setFormData(formData as object);
+};
+
+
   // Handle JSON upload
   const uploadJSON = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -77,76 +146,104 @@ function App() {
     link.click();
   };
 
-  // Handle form data change
-  const handleChange = ({ formData }: IChangeEvent<FormData>) => {
-    setFormData(formData as object);
+   // Download the formData as PDF
+   const downloadPDF = () => {
+    const doc = new jsPDF();
+    doc.text(JSON.stringify(formData, null, 2), 10, 10);
+    doc.save('formData.pdf');
   };
 
 
+
   return (
-    <div className="form-container">
-      <div className="dropdown">
-        <label htmlFor="schema-select">Choose a schema: </label>
-        <select
-          id="schema-select"
-          value={selectedSchema?.name || ''}
-          onChange={(e) => {
-            const selected = schemaList.find((s) => s.name === e.target.value);
-            if (selected) setSelectedSchema(selected);
-          }}
-        >
-          <option value="" disabled>
-            Select a schema
-          </option>
-          {schemaList.map((s) => (
-            <option key={s.name} value={s.name}>
-              {s.name}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {/* Display error message */}
-      {error && <div className="error-message">Error: {error}</div>}
-
-      {/* Display form if no error */}
-      {selectedSchema && !error && (
-        <Form
-          schema={schema}
-          uiSchema={uiSchema}
-          validator={validator}
-          formData={formData as any}
-          onChange={handleChange}
-        />
-      )}
-
-      <div>
-        <button type="button" className="btn btn-info" onClick={downloadJSON}>
-          Download JSON
-        </button>
-        <input type="file" accept=".json" onChange={uploadJSON} />
-      </div>
-
-      {/* Floating Side Panel */}
-      <div className="side-panel">
-        <button 
-          type="button" 
-          className="btn btn-info " 
-          style={{ marginTop: '10px' }}
-          onClick={downloadJSON}
+    <div>
+      <div className="form-container">
+        <div className="dropdown">
+          <label htmlFor="schema-select">Choose a schema: </label>
+          <select
+            id="schema-select"
+            value={selectedSchema?.name_n_version || ''}
+            onChange={(e) => {
+              const selected = schemaList.find((s) => s.name_n_version === e.target.value);
+              if (selected) setSelectedSchema(selected);
+            }}
           >
+            <option value="" disabled>
+              Select a schema
+            </option>
+            {schemaList.map((s) => (
+              <option key={s.name_n_version} value={s.name_n_version}>
+                {s.name_n_version}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Display error message */}
+        {error && <div className="error-message">Error: {error}</div>}
+
+        {/* Display form if no error */}
+        {selectedSchema && !error && (
+          <div>
+            <Form
+              schema={schema}
+              uiSchema={uiSchema}
+              validator={validator}
+              formData={formData as any}
+              onChange={handleChange}
+            />
+          </div>
+        )}
+
+        <div>
+          <button type="button" className="btn btn-info" onClick={downloadJSON}>
             Download JSON
-        </button>
+          </button>
+          <button type="button" className="btn btn-info" onClick={downloadPDF}>
+            Download PDF
+          </button>
+          <input type="file" accept=".json" onChange={uploadJSON} />
+          </div>
+      </div>
 
-        <input
-          type="file"
-          accept=".json"
-          onChange={uploadJSON}
-          style={{ marginTop: '10px' }}
-        />
+      {/* Display Table of Contents */}
+      {selectedSchema && !error && (
+          <div>
+            <div className="toc">
+              <h2>Table of Contents</h2>
+              <ul>{generateToC(schema, formData)}</ul>
+            </div>
+          </div>
+        )}
 
-        <a id="source_code" className="source_code" href="https://github.com/FAIRERdata/maDMP-Generation-Tool">Source code</a>
-      </div>  
+        {/* Floating Side Panel */}
+        <div className="side-panel">
+          <button 
+            type="button" 
+            className="btn btn-info " 
+            style={{ marginTop: '10px' }}
+            onClick={downloadJSON}
+            >
+              Download JSON
+          </button>
+          <button 
+            type="button" 
+            className="btn btn-info " 
+            style={{ marginTop: '10px' }}
+            onClick={downloadPDF}
+          >
+            Download PDF
+          </button>
+          <input
+            type="file"
+            accept=".json"
+            onChange={uploadJSON}
+            style={{ marginTop: '10px' }}
+          />
+
+          <a id="source_code" className="source_code" href="https://github.com/FAIRERdata/maDMP-Generation-Tool">Source code</a>
+        </div>  
+        
     </div>
   );
 }
