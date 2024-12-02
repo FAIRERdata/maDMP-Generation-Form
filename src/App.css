@@ -12,39 +12,43 @@ code {
     monospace;
 }
 
-/* Main container with a responsive layout */
+/* Main layout container using CSS Grid */
 .layout-container {
-  display: flex;
-  flex-wrap: wrap; /* Enable wrapping for responsive layout */
-  gap: 15px; /* Fixed space between elements */
+  display: grid;
+  grid-template-columns: 250px 1fr 180px; /* Define the three columns */
+  grid-template-rows: auto calc(100vh - 40px); /* Top content takes full width, rest forms 3 columns */
+  gap: 20px; /* Fixed gap between rows and columns */
   padding: 20px;
   box-sizing: border-box;
-  max-width: 1200px; /* Limit width to 1000px */
-  margin: auto;
-  justify-content: space-between; /* Evenly distribute the three columns */
 }
 
-/* Stack top-content on top of form-container */
+/* Top content spans the full width of the grid */
 .top-content {
-  flex: 1 1 100%; /* Take full width on top */
-  max-width: 100%; /* Ensure it spans the entire width */
-  margin-bottom: 20px;
+  grid-column: 1 / -1; /* Span all columns */
   background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
 }
+.top-content-container {
+  margin-left: 250px;
+  margin-right: 180px;
+}
 
-/* Form container aligned as a column */
+/* Form container takes the middle column */
 .form-container {
-  flex: 1; /* Occupy the remaining space */
-  max-width: calc(100% - 460px); /* Reserve space for ToC and side-panel */
+  grid-column: 2; /* Second column */
+  grid-row: 2; /* Second row */
   background-color: #fff;
-  padding: 10px;
+  padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-  box-sizing: border-box; /* Include padding in total size */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  overflow-y: auto;
+  word-wrap: break-word; /* Break long words */
+  word-break: break-word; /* Break long words */
+  overflow-wrap: break-word; /* Break long words */
 }
 /* Form styles */
 .form-section {
@@ -56,16 +60,17 @@ code {
 }
 
 /* Other container used in footer*/
-.container {
-  max-width: 650px;
+.footer-container {
+  max-width: 100%;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
   background-color: #fff;
-  margin-top: 20px;
+  margin-top: 10px;
   word-wrap: break-word; /* Break long words */
   word-break: break-word; /* Break long words */
   overflow-wrap: break-word; /* Break long words */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
 }
 
 .source_code{
@@ -74,16 +79,18 @@ code {
   text-align: center;
 }
 
-/* Side Panel */
+/* Side panel in the last column */
 .side-panel {
-  flex: 0 0 180px; /* Fixed width for side panel */
-  flex-shrink: 0; /* Prevent shrinking */
-  text-align: center; /* Center the side panel's content */
+  grid-column: 3; /* Third column */
+  grid-row: 2; /* Second row */
   background-color: #f8f9fa;
   padding: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
-  box-sizing: border-box; /* Include padding in total size */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  text-align: center;
+  max-height: 250px;
+  padding-top: 20px;
 }
 .side-panel button, .side-panel input {
     width: 100%;
@@ -107,7 +114,6 @@ input[type='file'] {
     margin-top: 10px;
 }
 
-
 .dropdown {
     position: relative;
     display: inline-block;
@@ -122,11 +128,13 @@ input[type='file'] {
 
 /* Table of Contents */
 .toc {
-  flex: 0 0 250px; /* Fixed width for ToC */
+  grid-column: 1; /* First column */
+  grid-row: 2; /* Second row */
   background-color: rgba(249, 249, 249, 0.8);
   padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
   max-height: calc(100vh - 40px); /* Allow scrolling within viewport height */
   overflow-y: auto;
   box-sizing: border-box;
@@ -179,17 +187,21 @@ input[type='file'] {
   }
 }
 
-/* Responsive adjustment for smaller screens */
+/* Responsive design for smaller screens */
 @media (max-width: 768px) {
   .layout-container {
-    flex-direction: column; /* Stack everything vertically */
+    grid-template-columns: 1fr; /* Single column */
+    grid-template-rows: auto auto auto auto; /* Stack elements */
   }
 
-  .top-content,
-  .form-container,
+  .top-content {
+    grid-column: 1; /* Full width */
+  }
+
   .toc,
+  .form-container,
   .side-panel {
-    flex: 1 1 100%; /* Full-width for all elements */
-    max-width: 100%; /* Ensure full width */
+    grid-column: 1; /* Full width */
+    grid-row: auto; /* Stack rows */
   }
 }

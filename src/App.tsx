@@ -150,19 +150,21 @@ function App() {
     <div className="layout-container">
       {/* Top Content Section */}
       <div className="top-content">
-        <h1 id="title">maDMP-Generation-Form</h1>
-        <p>
-          maDMP-Generation-Tool is a tool to generate maDMPs for your research data.
-          It is an implementation based on the{' '}
-          <a href="https://fairerdata.github.io/maDMP-Standard/">maDMP-Standard</a>.
-        </p>
-        <ul>
-          <li>Choose your desired maDMP version</li>
-          <li>Create a new maDMP</li>
-          <li>Validate your maDMP using the validation button at the bottom</li>
-          <li>Download your maDMP as a JSON file</li>
-          <li>Upload a JSON file to edit an existing maDMP</li>
-        </ul>
+        <div className='top-content-container'>
+          <h1 id="title">maDMP-Generation-Form</h1>
+          <p>
+            maDMP-Generation-Tool is a tool to generate maDMPs for your research data.
+            It is an implementation based on the{' '}
+            <a href="https://fairerdata.github.io/maDMP-Standard/">maDMP-Standard</a>.
+          </p>
+          <ul>
+            <li>Choose your desired maDMP version</li>
+            <li>Create a new maDMP</li>
+            <li>Validate your maDMP using the validation button at the bottom</li>
+            <li>Download your maDMP as a JSON file</li>
+            <li>Upload a JSON file to edit an existing maDMP</li>
+          </ul>
+        </div>
       </div>
 
       {/* Table of Contents */}
@@ -212,7 +214,7 @@ function App() {
               />
           )}
 
-          <div>
+          <div id='bottom'>
               <button
                   type="button"
                   className="btn btn-info bottom-button"
@@ -240,8 +242,8 @@ function App() {
               onChange={uploadJSON}
               style={{ marginTop: '10px' }}
           />
-          <a className="source_code" href="#title">Go to top</a>
-          <a className="source_code" href="#footer_source_code">Go to bottom</a>
+          <a className="source_code" href="#schema-select">Go to top</a>
+          <a className="source_code" href="#bottom">Go to bottom</a>
           <a
               className="source_code"
               href="https://github.com/FAIRERdata/maDMP-Generation-Tool"
