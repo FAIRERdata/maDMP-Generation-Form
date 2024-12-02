@@ -12,41 +12,92 @@ code {
     monospace;
 }
 
-/* Other container */
-.container {
-  max-width: 650px;
+/* Main layout container using CSS Grid */
+.layout-container {
+  display: grid;
+  grid-template-columns: 250px 1fr 180px; /* Define the three columns */
+  grid-template-rows: auto calc(100vh - 40px); /* Top content takes full width, rest forms 3 columns */
+  gap: 20px; /* Fixed gap between rows and columns */
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Top content spans the full width of the grid */
+.top-content {
+  grid-column: 1 / -1; /* Span all columns */
+  background-color: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+.top-content-container {
+  margin-left: 250px;
+  margin-right: 180px;
+}
+
+/* Form container takes the middle column */
+.form-container {
+  grid-column: 2; /* Second column */
+  grid-row: 2; /* Second row */
   background-color: #fff;
-  margin-top: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  overflow-y: auto;
   word-wrap: break-word; /* Break long words */
   word-break: break-word; /* Break long words */
   overflow-wrap: break-word; /* Break long words */
 }
+/* Form styles */
+.form-section {
+  margin-bottom: 40px;
+}
+
+.form-section h3 {
+  margin-bottom: 10px;
+}
+
+/* Other container used in footer*/
+.footer-container {
+  max-width: 100%;
+  padding: 20px;
+  background-color: #fff;
+  margin-top: 10px;
+  word-wrap: break-word; /* Break long words */
+  word-break: break-word; /* Break long words */
+  overflow-wrap: break-word; /* Break long words */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
 
 .source_code{
-  margin-top: 20px;
+  margin-top: 10px;
   display: block;
   text-align: center;
 }
 
-/* Side Panel */
+/* Side panel in the last column */
 .side-panel {
-    position: fixed;
-    top: 20%;
-    right: 60px;
-    width: 150px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
+  grid-column: 3; /* Third column */
+  grid-row: 2; /* Second row */
+  background-color: #f8f9fa;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  text-align: center;
+  max-height: 250px;
+  padding-top: 20px;
 }
 .side-panel button, .side-panel input {
     width: 100%;
     padding: 10px;
     margin: 5px 0;
     font-size: 14px;
+    box-sizing: border-box; /* Include padding and border in the element's total width */
 }
 .side-panel button {
     cursor: pointer;
@@ -63,18 +114,6 @@ input[type='file'] {
     margin-top: 10px;
 }
 
-/* Form container */
-.form-container {
-    max-width: 650px;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    margin: auto;
-    word-wrap: break-word; /* Break long words */
-    word-break: break-word; /* Break long words */
-    overflow-wrap: break-word; /* Break long words */
-}
 .dropdown {
     position: relative;
     display: inline-block;
@@ -82,22 +121,24 @@ input[type='file'] {
     padding: 20px;
     border-radius: 8px;
 }
+.bottom-button {
+    margin-top: 10px;
+    text-align: center;
+}
 
 /* Table of Contents */
 .toc {
-    position: fixed;
-    top: 0%;
-    left: 10px;
-    max-width: 250px; /* Maximum width */
-    min-width: 150px; /* Minimum width */
-    background-color: rgba(249, 249, 249, 0.8);
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    max-height: 100vh;
-    overflow-y: auto;
-    overflow-x: auto;
-  }
+  grid-column: 1; /* First column */
+  grid-row: 2; /* Second row */
+  background-color: rgba(249, 249, 249, 0.8);
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  max-height: calc(100vh - 40px); /* Allow scrolling within viewport height */
+  overflow-y: auto;
+  box-sizing: border-box;
+}
 
 .toc > ul > li {
     margin-left: -20px; /* Indent for the highest-level list items */
@@ -133,16 +174,34 @@ input[type='file'] {
   display: block;
 }
 
-/* Form Content */
-.form-content {
-  margin-left: 250px; /* Adjust for ToC width */
-  padding: 20px;
+
+/* print styles */
+@media print {
+  .side-panel, .toc {
+    display: none;
+  }
+
+  .form-container {
+    margin: 0;
+    box-shadow: none;
+  }
 }
 
-.form-section {
-  margin-bottom: 40px;
-}
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .layout-container {
+    grid-template-columns: 1fr; /* Single column */
+    grid-template-rows: auto auto auto auto; /* Stack elements */
+  }
 
-.form-section h3 {
-  margin-bottom: 10px;
+  .top-content {
+    grid-column: 1; /* Full width */
+  }
+
+  .toc,
+  .form-container,
+  .side-panel {
+    grid-column: 1; /* Full width */
+    grid-row: auto; /* Stack rows */
+  }
 }

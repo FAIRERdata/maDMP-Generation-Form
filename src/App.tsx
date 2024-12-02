@@ -52,72 +52,72 @@ function App() {
       });
   }, [selectedSchema]);
 
-// Updated ToC generation function
-const generateToC = (schema: any, formData: any, parentKey: string = 'root'): JSX.Element[] => {
-  if (!schema || typeof schema !== 'object' || !schema.properties) return [];
+  // Updated ToC generation function
+  const generateToC = (schema: any, formData: any, parentKey: string = 'root'): JSX.Element[] => {
+    if (!schema || typeof schema !== 'object' || !schema.properties) return [];
 
-  return Object.keys(schema.properties).map((key) => {
-    const fullPath = parentKey ? `${parentKey}_${key}` : key;
-    const property = schema.properties[key];
-    const data = formData ? formData[key] : undefined;
+    return Object.keys(schema.properties).map((key) => {
+      const fullPath = parentKey ? `${parentKey}_${key}` : key;
+      const property = schema.properties[key];
+      const data = formData ? formData[key] : undefined;
 
-    return (
-      <li key={fullPath}>
-        <a href={`#${fullPath}`} className="toc-link" onClick={(e) => {
-          e.preventDefault();
-          const nestedList = e.currentTarget.nextElementSibling;
-          if (nestedList) {
-            nestedList.classList.toggle('show');
-          }
-          // Delay the default behavior to allow the toggle to complete
-          setTimeout(() => {
-            window.location.hash = fullPath;
-          }, 100);
-        }}>
-          {key}
-        </a>
-        {/* If it's an object, recurse */}
-        {property.type === 'object' && property.properties && (
-          <ul className="nested-toc">
-            {generateToC(property, data, fullPath)}
-          </ul>
-        )}
-        {/* If it's an array, list its items */}
-        {property.type === 'array' && Array.isArray(data) && (
-          <ul className="nested-toc">
-            {data.map((item: any, index: number) => (
-              <li key={`${fullPath}_${index}`}>
-                <a href={`#${fullPath}_${index}`} className="toc-link" onClick={(e) => {
-                  e.preventDefault();
-                  const nestedList = e.currentTarget.nextElementSibling;
-                  if (nestedList) {
-                    nestedList.classList.toggle('show');
-                  }
-                  // Delay the default behavior to allow the toggle to complete
-                  setTimeout(() => {
-                    window.location.hash = `${fullPath}_${index}`;
-                  }, 100);
-                }}>
-                  {`${key} [${index + 1}]`}
-                </a>
-                {property.items.type === 'object' && property.items.properties && (
-                  <ul className="nested-toc">
-                    {generateToC(property.items, item, `${fullPath}_${index}`)}
-                  </ul>
-                )}
-              </li>
-            ))}
-          </ul>
-        )}
-      </li>
-    );
-  });
-};
+      return (
+        <li key={fullPath}>
+          <a href={`#${fullPath}`} className="toc-link" onClick={(e) => {
+            e.preventDefault();
+            const nestedList = e.currentTarget.nextElementSibling;
+            if (nestedList) {
+              nestedList.classList.toggle('show');
+            }
+            // Delay the default behavior to allow the toggle to complete
+            setTimeout(() => {
+              window.location.hash = fullPath;
+            }, 100);
+          }}>
+            {key}
+          </a>
+          {/* If it's an object, recurse */}
+          {property.type === 'object' && property.properties && (
+            <ul className="nested-toc">
+              {generateToC(property, data, fullPath)}
+            </ul>
+          )}
+          {/* If it's an array, list its items */}
+          {property.type === 'array' && Array.isArray(data) && (
+            <ul className="nested-toc">
+              {data.map((item: any, index: number) => (
+                <li key={`${fullPath}_${index}`}>
+                  <a href={`#${fullPath}_${index}`} className="toc-link" onClick={(e) => {
+                    e.preventDefault();
+                    const nestedList = e.currentTarget.nextElementSibling;
+                    if (nestedList) {
+                      nestedList.classList.toggle('show');
+                    }
+                    // Delay the default behavior to allow the toggle to complete
+                    setTimeout(() => {
+                      window.location.hash = `${fullPath}_${index}`;
+                    }, 100);
+                  }}>
+                    {`${key} [${index + 1}]`}
+                  </a>
+                  {property.items.type === 'object' && property.items.properties && (
+                    <ul className="nested-toc">
+                      {generateToC(property.items, item, `${fullPath}_${index}`)}
+                    </ul>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </li>
+      );
+    });
+  };
 
-// Handle form data change
-const handleChange = ({ formData }: IChangeEvent<FormData>) => {
-  setFormData(formData as object);
-};
+  // Handle form data change
+  const handleChange = ({ formData }: IChangeEvent<FormData>) => {
+    setFormData(formData as object);
+  };
 
 
   // Handle JSON upload
@@ -146,104 +146,111 @@ const handleChange = ({ formData }: IChangeEvent<FormData>) => {
     link.click();
   };
 
-   // Download the formData as PDF
-   const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.text(JSON.stringify(formData, null, 2), 10, 10);
-    doc.save('formData.pdf');
-  };
-
-
-
   return (
-    <div>
-      <div className="form-container">
-        <div className="dropdown">
-          <label htmlFor="schema-select">Choose a schema: </label>
-          <select
-            id="schema-select"
-            value={selectedSchema?.name_n_version || ''}
-            onChange={(e) => {
-              const selected = schemaList.find((s) => s.name_n_version === e.target.value);
-              if (selected) setSelectedSchema(selected);
-            }}
-          >
-            <option value="" disabled>
-              Select a schema
-            </option>
-            {schemaList.map((s) => (
-              <option key={s.name_n_version} value={s.name_n_version}>
-                {s.name_n_version}
-              </option>
-            ))}
-          </select>
+    <div className="layout-container">
+      {/* Top Content Section */}
+      <div className="top-content">
+        <div className='top-content-container'>
+          <h1 id="title">maDMP-Generation-Form</h1>
+          <p>
+            maDMP-Generation-Tool is a tool to generate maDMPs for your research data.
+            It is an implementation based on the{' '}
+            <a href="https://fairerdata.github.io/maDMP-Standard/">maDMP-Standard</a>.
+          </p>
+          <ul>
+            <li>Choose your desired maDMP version</li>
+            <li>Create a new maDMP</li>
+            <li>Validate your maDMP using the validation button at the bottom</li>
+            <li>Download your maDMP as a JSON file</li>
+            <li>Upload a JSON file to edit an existing maDMP</li>
+          </ul>
         </div>
+      </div>
 
-        {/* Display error message */}
-        {error && <div className="error-message">Error: {error}</div>}
-
-        {/* Display form if no error */}
-        {selectedSchema && !error && (
-          <div>
-            <Form
-              schema={schema}
-              uiSchema={uiSchema}
-              validator={validator}
-              formData={formData as any}
-              onChange={handleChange}
-            />
+      {/* Table of Contents */}
+      {selectedSchema && !error && (
+          <div className="toc">
+              <h2>Table of Contents</h2>
+              <ul>{generateToC(schema, formData)}</ul>
           </div>
-        )}
+      )}
 
-        <div>
-          <button type="button" className="btn btn-info" onClick={downloadJSON}>
-            Download JSON
-          </button>
-          <button type="button" className="btn btn-info" onClick={downloadPDF}>
-            Download PDF
-          </button>
-          <input type="file" accept=".json" onChange={uploadJSON} />
+      {/* Main Form Content */}
+      <div className="form-container">
+          <div className="dropdown">
+              <label htmlFor="schema-select">Choose a schema: </label>
+              <select
+                  id="schema-select"
+                  value={selectedSchema?.name_n_version || ''}
+                  onChange={(e) => {
+                      const selected = schemaList.find(
+                          (s) => s.name_n_version === e.target.value
+                      );
+                      if (selected) setSelectedSchema(selected);
+                  }}
+              >
+                  <option value="" disabled>
+                      Select a schema
+                  </option>
+                  {schemaList.map((s) => (
+                      <option key={s.name_n_version} value={s.name_n_version}>
+                          {s.name_n_version}
+                      </option>
+                  ))}
+              </select>
+          </div>
+
+          {/* Display error message */}
+          {error && <div className="error-message">Error: {error}</div>}
+
+          {/* Display form */}
+          {selectedSchema && !error && (
+              <Form
+                  schema={schema}
+                  uiSchema={uiSchema}
+                  validator={validator}
+                  formData={formData as any}
+                  onChange={handleChange}
+              />
+          )}
+
+          <div id='bottom'>
+              <button
+                  type="button"
+                  className="btn btn-info bottom-button"
+                  onClick={downloadJSON}
+              >
+                  Download JSON
+              </button>
+              <input type="file" accept=".json" onChange={uploadJSON} />
           </div>
       </div>
 
-      {/* Display Table of Contents */}
-      {selectedSchema && !error && (
-          <div>
-            <div className="toc">
-              <h2>Table of Contents</h2>
-              <ul>{generateToC(schema, formData)}</ul>
-            </div>
-          </div>
-        )}
-
-        {/* Floating Side Panel */}
-        <div className="side-panel">
-          <button 
-            type="button" 
-            className="btn btn-info " 
-            style={{ marginTop: '10px' }}
-            onClick={downloadJSON}
-            >
+      {/* Floating Side Panel */}
+      <div className="side-panel">
+          <button
+              type="button"
+              className="btn btn-info"
+              style={{ marginTop: '10px' }}
+              onClick={downloadJSON}
+          >
               Download JSON
           </button>
-          <button 
-            type="button" 
-            className="btn btn-info " 
-            style={{ marginTop: '10px' }}
-            onClick={downloadPDF}
-          >
-            Download PDF
-          </button>
           <input
-            type="file"
-            accept=".json"
-            onChange={uploadJSON}
-            style={{ marginTop: '10px' }}
+              type="file"
+              accept=".json"
+              onChange={uploadJSON}
+              style={{ marginTop: '10px' }}
           />
-
-          <a id="source_code" className="source_code" href="https://github.com/FAIRERdata/maDMP-Generation-Tool">Source code</a>
-        </div>  
-        
+          <a className="source_code" href="#schema-select">Go to top</a>
+          <a className="source_code" href="#bottom">Go to bottom</a>
+          <a
+              className="source_code"
+              href="https://github.com/FAIRERdata/maDMP-Generation-Tool"
+          >
+              Source code
+          </a>
+      </div>
     </div>
   );
 }
