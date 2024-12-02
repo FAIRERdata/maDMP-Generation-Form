@@ -146,15 +146,6 @@ const handleChange = ({ formData }: IChangeEvent<FormData>) => {
     link.click();
   };
 
-   // Download the formData as PDF
-   const downloadPDF = () => {
-    const doc = new jsPDF();
-    doc.text(JSON.stringify(formData, null, 2), 10, 10);
-    doc.save('formData.pdf');
-  };
-
-
-
   return (
     <div>
       <div className="form-container">
@@ -196,11 +187,8 @@ const handleChange = ({ formData }: IChangeEvent<FormData>) => {
         )}
 
         <div>
-          <button type="button" className="btn btn-info" onClick={downloadJSON}>
+          <button type="button" className="btn btn-info bottom-button" onClick={downloadJSON}>
             Download JSON
-          </button>
-          <button type="button" className="btn btn-info" onClick={downloadPDF}>
-            Download PDF
           </button>
           <input type="file" accept=".json" onChange={uploadJSON} />
           </div>
@@ -226,22 +214,16 @@ const handleChange = ({ formData }: IChangeEvent<FormData>) => {
             >
               Download JSON
           </button>
-          <button 
-            type="button" 
-            className="btn btn-info " 
-            style={{ marginTop: '10px' }}
-            onClick={downloadPDF}
-          >
-            Download PDF
-          </button>
           <input
             type="file"
             accept=".json"
             onChange={uploadJSON}
             style={{ marginTop: '10px' }}
           />
+          <a className="source_code" href="#title">Go to top</a>
+          <a className="source_code" href="#footer_source_code">Go to bottom</a>
 
-          <a id="source_code" className="source_code" href="https://github.com/FAIRERdata/maDMP-Generation-Tool">Source code</a>
+          <a className="source_code" href="https://github.com/FAIRERdata/maDMP-Generation-Tool">Source code</a>
         </div>  
         
     </div>

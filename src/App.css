@@ -26,7 +26,7 @@ code {
 }
 
 .source_code{
-  margin-top: 20px;
+  margin-top: 10px;
   display: block;
   text-align: center;
 }
@@ -35,18 +35,21 @@ code {
 .side-panel {
     position: fixed;
     top: 20%;
-    right: 60px;
-    width: 150px;
+    right: 50px;
+    width: 180px;
     padding: 10px;
     background-color: #f8f9fa;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     border-radius: 8px;
+    box-sizing: border-box; /* Include padding and border in the element's total width */
+    text-align: center; /* Center the content inside the side panel */
 }
 .side-panel button, .side-panel input {
     width: 100%;
     padding: 10px;
     margin: 5px 0;
     font-size: 14px;
+    box-sizing: border-box; /* Include padding and border in the element's total width */
 }
 .side-panel button {
     cursor: pointer;
@@ -81,6 +84,10 @@ input[type='file'] {
     max-width: 800px;
     padding: 20px;
     border-radius: 8px;
+}
+.bottom-button {
+    margin-top: 10px;
+    text-align: center;
 }
 
 /* Table of Contents */
@@ -145,4 +152,21 @@ input[type='file'] {
 
 .form-section h3 {
   margin-bottom: 10px;
+}
+
+/* print styles */
+@media print {
+  .side-panel, .toc {
+    display: none;
+  }
+
+  .form-container {
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .form-content {
+    margin-left: 0;
+    padding: 0;
+  }
 }
