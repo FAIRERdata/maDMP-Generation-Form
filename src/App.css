@@ -12,7 +12,50 @@ code {
     monospace;
 }
 
-/* Other container */
+/* Main container with a responsive layout */
+.layout-container {
+  display: flex;
+  flex-wrap: wrap; /* Enable wrapping for responsive layout */
+  gap: 15px; /* Fixed space between elements */
+  padding: 20px;
+  box-sizing: border-box;
+  max-width: 1200px; /* Limit width to 1000px */
+  margin: auto;
+  justify-content: space-between; /* Evenly distribute the three columns */
+}
+
+/* Stack top-content on top of form-container */
+.top-content {
+  flex: 1 1 100%; /* Take full width on top */
+  max-width: 100%; /* Ensure it spans the entire width */
+  margin-bottom: 20px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+
+/* Form container aligned as a column */
+.form-container {
+  flex: 1; /* Occupy the remaining space */
+  max-width: calc(100% - 460px); /* Reserve space for ToC and side-panel */
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  box-sizing: border-box; /* Include padding in total size */
+}
+/* Form styles */
+.form-section {
+  margin-bottom: 40px;
+}
+
+.form-section h3 {
+  margin-bottom: 10px;
+}
+
+/* Other container used in footer*/
 .container {
   max-width: 650px;
   padding: 20px;
@@ -33,16 +76,14 @@ code {
 
 /* Side Panel */
 .side-panel {
-    position: fixed;
-    top: 20%;
-    right: 50px;
-    width: 180px;
-    padding: 10px;
-    background-color: #f8f9fa;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border-radius: 8px;
-    box-sizing: border-box; /* Include padding and border in the element's total width */
-    text-align: center; /* Center the content inside the side panel */
+  flex: 0 0 180px; /* Fixed width for side panel */
+  flex-shrink: 0; /* Prevent shrinking */
+  text-align: center; /* Center the side panel's content */
+  background-color: #f8f9fa;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  box-sizing: border-box; /* Include padding in total size */
 }
 .side-panel button, .side-panel input {
     width: 100%;
@@ -66,18 +107,7 @@ input[type='file'] {
     margin-top: 10px;
 }
 
-/* Form container */
-.form-container {
-    max-width: 650px;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-    margin: auto;
-    word-wrap: break-word; /* Break long words */
-    word-break: break-word; /* Break long words */
-    overflow-wrap: break-word; /* Break long words */
-}
+
 .dropdown {
     position: relative;
     display: inline-block;
@@ -92,19 +122,15 @@ input[type='file'] {
 
 /* Table of Contents */
 .toc {
-    position: fixed;
-    top: 0%;
-    left: 10px;
-    max-width: 250px; /* Maximum width */
-    min-width: 150px; /* Minimum width */
-    background-color: rgba(249, 249, 249, 0.8);
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    max-height: 100vh;
-    overflow-y: auto;
-    overflow-x: auto;
-  }
+  flex: 0 0 250px; /* Fixed width for ToC */
+  background-color: rgba(249, 249, 249, 0.8);
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  max-height: calc(100vh - 40px); /* Allow scrolling within viewport height */
+  overflow-y: auto;
+  box-sizing: border-box;
+}
 
 .toc > ul > li {
     margin-left: -20px; /* Indent for the highest-level list items */
@@ -140,19 +166,6 @@ input[type='file'] {
   display: block;
 }
 
-/* Form Content */
-.form-content {
-  margin-left: 250px; /* Adjust for ToC width */
-  padding: 20px;
-}
-
-.form-section {
-  margin-bottom: 40px;
-}
-
-.form-section h3 {
-  margin-bottom: 10px;
-}
 
 /* print styles */
 @media print {
@@ -164,9 +177,19 @@ input[type='file'] {
     margin: 0;
     box-shadow: none;
   }
+}
 
-  .form-content {
-    margin-left: 0;
-    padding: 0;
+/* Responsive adjustment for smaller screens */
+@media (max-width: 768px) {
+  .layout-container {
+    flex-direction: column; /* Stack everything vertically */
+  }
+
+  .top-content,
+  .form-container,
+  .toc,
+  .side-panel {
+    flex: 1 1 100%; /* Full-width for all elements */
+    max-width: 100%; /* Ensure full width */
   }
 }
