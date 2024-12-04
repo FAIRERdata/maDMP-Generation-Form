@@ -112,6 +112,8 @@ code {
 }
 input[type='file'] {
     margin-top: 10px;
+    white-space: normal; /* Allow text to wrap */
+    word-wrap: break-word; /* Break long words */
 }
 
 .dropdown {
