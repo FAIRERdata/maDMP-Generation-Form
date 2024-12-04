@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Form, { IChangeEvent } from '@rjsf/core';
 import validator from '@rjsf/validator-ajv8';
 import './App.css';
-import { jsPDF } from 'jspdf';
 
 function App() {
   const [schemaList, setSchemaList] = useState<{ name_n_version: string; schema: string; uischema: string; toc: string  }[]>([]);
@@ -27,7 +26,7 @@ function App() {
         console.error(err);
         setError('Failed to load schema metadata.');
       });
-  }, []);
+  }, [schemasUrl]);
 
   useEffect(() => {
     if (!selectedSchema) return;
@@ -40,8 +39,11 @@ function App() {
 
     Promise.all([fetch(schemaUrl).then((res) => res.json()), fetch(uiSchemaUrl).then((res) => res.json())])
       .then(([schemaData, uiSchemaData]) => {
+        // Preprocess schema to modify titles
+        const processedSchema = preprocessSchema(schemaData);
+
         uiSchemaData['ui:submitButtonOptions'] = { submitText: 'Validate' };
-        setSchema(schemaData);
+        setSchema(processedSchema);
         setUiSchema(uiSchemaData);
         setLoading(false);
       })
@@ -52,67 +54,145 @@ function App() {
       });
   }, [selectedSchema]);
 
-  // Updated ToC generation function
-  const generateToC = (schema: any, formData: any, parentKey: string = 'root'): JSX.Element[] => {
-    if (!schema || typeof schema !== 'object' || !schema.properties) return [];
-
-    return Object.keys(schema.properties).map((key) => {
-      const fullPath = parentKey ? `${parentKey}_${key}` : key;
-      const property = schema.properties[key];
-      const data = formData ? formData[key] : undefined;
-
-      return (
-        <li key={fullPath}>
-          <a href={`#${fullPath}`} className="toc-link" onClick={(e) => {
-            e.preventDefault();
-            const nestedList = e.currentTarget.nextElementSibling;
-            if (nestedList) {
-              nestedList.classList.toggle('show');
-            }
-            // Delay the default behavior to allow the toggle to complete
-            setTimeout(() => {
-              window.location.hash = fullPath;
-            }, 100);
-          }}>
-            {key}
-          </a>
-          {/* If it's an object, recurse */}
-          {property.type === 'object' && property.properties && (
-            <ul className="nested-toc">
-              {generateToC(property, data, fullPath)}
-            </ul>
-          )}
-          {/* If it's an array, list its items */}
-          {property.type === 'array' && Array.isArray(data) && (
-            <ul className="nested-toc">
-              {data.map((item: any, index: number) => (
-                <li key={`${fullPath}_${index}`}>
-                  <a href={`#${fullPath}_${index}`} className="toc-link" onClick={(e) => {
-                    e.preventDefault();
-                    const nestedList = e.currentTarget.nextElementSibling;
-                    if (nestedList) {
-                      nestedList.classList.toggle('show');
-                    }
-                    // Delay the default behavior to allow the toggle to complete
-                    setTimeout(() => {
-                      window.location.hash = `${fullPath}_${index}`;
-                    }, 100);
-                  }}>
-                    {`${key} [${index + 1}]`}
-                  </a>
-                  {property.items.type === 'object' && property.items.properties && (
-                    <ul className="nested-toc">
-                      {generateToC(property.items, item, `${fullPath}_${index}`)}
-                    </ul>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </li>
-      );
-    });
+  // Helper function to preprocess schema
+  const preprocessSchema = (schema: any): any => {
+    if (!schema || typeof schema !== 'object') return schema;
+  
+    // Process "allOf" structures
+    if (schema.allOf && Array.isArray(schema.allOf)) {
+      schema.allOf = schema.allOf.map(preprocessSchema); // Process each subschema
+    }
+  
+    // Process "if-then" structures
+    if (schema.if) {
+      schema.if = preprocessSchema(schema.if);
+    }
+    if (schema.then) {
+      schema.then = preprocessSchema(schema.then);
+    }
+  
+    // Update "title" with "question" if both exist
+    if (schema.title && schema.question) {
+      schema.title = `${schema.question} [${schema.title}]`;
+    }
+  
+    // Recursively process properties
+    if (schema.properties) {
+      Object.keys(schema.properties).forEach((key) => {
+        schema.properties[key] = preprocessSchema(schema.properties[key]);
+      });
+    }
+  
+    // Process "items" if it's an array
+    if (schema.type === 'array' && schema.items) {
+      schema.items = preprocessSchema(schema.items);
+    }
+  
+    return schema;
   };
+  
+  
+  const generateToC = (schema: any, formData: any, parentKey: string = 'root'): JSX.Element[] => {
+    if (!schema || typeof schema !== 'object') return [];
+  
+    const tocItems: JSX.Element[] = [];
+  
+    // Handle normal properties
+    if (schema.properties) {
+      tocItems.push(
+        ...Object.keys(schema.properties).map((key) => {
+          const fullPath = parentKey ? `${parentKey}_${key}` : key;
+          const property = schema.properties[key];
+          const data = formData ? formData[key] : undefined;
+  
+          return (
+            <li key={fullPath}>
+              <a
+                href={`#${fullPath}`}
+                className="toc-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const nestedList = e.currentTarget.nextElementSibling;
+                  if (nestedList) {
+                    nestedList.classList.toggle('show');
+                  }
+                  setTimeout(() => {
+                    window.location.hash = fullPath;
+                  }, 100);
+                }}
+              >
+                {key}
+              </a>
+              {property.type === 'object' && property.properties && (
+                <ul className="nested-toc">{generateToC(property, data, fullPath)}</ul>
+              )}
+              {property.type === 'array' && Array.isArray(data) && (
+                <ul className="nested-toc">
+                  {data.map((item: any, index: number) => (
+                    <li key={`${fullPath}_${index}`}>
+                      <a
+                        href={`#${fullPath}_${index}`}
+                        className="toc-link"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const nestedList = e.currentTarget.nextElementSibling;
+                          if (nestedList) {
+                            nestedList.classList.toggle('show');
+                          }
+                          setTimeout(() => {
+                            window.location.hash = `${fullPath}_${index}`;
+                          }, 100);
+                        }}
+                      >
+                        {`${key} [${index + 1}]`}
+                      </a>
+                      {property.items && generateToC(property.items, item, `${fullPath}_${index}`)}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          );
+        })
+      );
+    }
+  
+    // Handle "allOf"
+    if (Array.isArray(schema.allOf)) {
+      schema.allOf.forEach((subSchema, index) => {
+        const subKey = `${parentKey}_allOf_${index}`;
+        tocItems.push(...generateToC(subSchema, formData, subKey));
+      });
+    }
+  
+    // Handle "if/then/else"
+    if (schema.if && schema.then) {
+      // Add "if" logic to ToC (optional)
+      if (formData && evaluateCondition(schema.if, formData)) {
+        tocItems.push(...generateToC(schema.then, formData, `${parentKey}_then`));
+      }
+      if (schema.else) {
+        tocItems.push(...generateToC(schema.else, formData, `${parentKey}_else`));
+      }
+    }
+  
+    return tocItems;
+  };
+  
+  // Helper function to evaluate "if" conditions
+  const evaluateCondition = (condition: any, formData: any): boolean => {
+    if (!condition || !formData) return false;
+    // Implement basic checks for "properties" or "enum"
+    if (condition.properties) {
+      return Object.keys(condition.properties).every((key) =>
+        condition.properties[key].enum
+          ? condition.properties[key].enum.includes(formData[key])
+          : true
+      );
+    }
+    return false;
+  };
+  
 
   // Handle form data change
   const handleChange = ({ formData }: IChangeEvent<FormData>) => {
@@ -157,13 +237,20 @@ function App() {
             It is an implementation based on the{' '}
             <a href="https://fairerdata.github.io/maDMP-Standard/">maDMP-Standard</a>.
           </p>
+          Creating a new DMP:          
           <ul>
             <li>Choose your desired maDMP version</li>
             <li>Create a new maDMP</li>
             <li>Validate your maDMP using the validation button at the bottom</li>
-            <li>Download your maDMP as a JSON file</li>
-            <li>Upload a JSON file to edit an existing maDMP</li>
+            <li>Save your maDMP by downloading as a JSON file</li>
+            <li>Print the form to save it as human readable format</li>
           </ul>
+          Editing an existing DMP:
+          <ul>
+            <li>Upload a JSON file to edit an existing maDMP using the choose file button</li>
+          </ul>
+            
+          
         </div>
       </div>
 
