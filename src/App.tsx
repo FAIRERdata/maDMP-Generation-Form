@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Form, { IChangeEvent } from '@rjsf/core';
 import validator from '@rjsf/validator-ajv8';
 import './App.css';
+import Modal from './Modal'; // Import the modal component
+import ModalContent from './ModalContent'; // Import the modal content component
 
 function App() {
   const [schemaList, setSchemaList] = useState<{ name_n_version: string; schema: string; uischema: string; toc: string  }[]>([]);
@@ -11,6 +13,10 @@ function App() {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const [isModalOpen, setModalOpen] = useState(false);
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
 
   const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/PublishedSchemas/';
   const schemasUrl = folder_path + 'schema_metadata.json';
@@ -237,20 +243,34 @@ function App() {
             It is an implementation based on the{' '}
             <a href="https://fairerdata.github.io/maDMP-Standard/">maDMP-Standard</a>.
           </p>
-          Creating a new DMP:          
-          <ul>
-            <li>Choose your desired maDMP version</li>
-            <li>Create a new maDMP</li>
-            <li>Validate your maDMP using the validation button at the bottom</li>
-            <li>Save your maDMP by downloading as a JSON file</li>
-            <li>Print the form to save it as human readable format</li>
-          </ul>
-          Editing an existing DMP:
-          <ul>
-            <li>Upload a JSON file to edit an existing maDMP using the choose file button</li>
-          </ul>
-            
-          
+          <p>
+            Creating a new DMP:          
+            <ul>
+              <li>Choose your desired maDMP version</li>
+              <li>Create a new maDMP</li>
+              <li>Validate your maDMP using the validation button at the bottom</li>
+              <li>Save your maDMP by downloading as a JSON file</li>
+              <li>Print the form to save it as human readable format</li>
+            </ul>
+            Editing an existing DMP:
+            <ul>
+              <li>Upload a JSON file to edit an existing maDMP using the choose file button</li>
+            </ul>
+          </p>
+          {/* Open Modal Button */}
+          <p>
+            <a href="#" onClick={(e) => {
+              e.preventDefault();
+              openModal();
+            }}>
+              Author Statement
+            </a>
+
+            {/* Modal Component */}
+            <Modal isOpen={isModalOpen} onClose={closeModal}>
+              <ModalContent onClose={closeModal} /> {/* Pass closeModal as a prop */}
+            </Modal>
+          </p>
         </div>
       </div>
 
@@ -265,8 +285,10 @@ function App() {
       {/* Main Form Content */}
       <div className="form-container">
           <div className="dropdown">
-              <label htmlFor="schema-select">Choose a schema: </label>
-              <select
+              <label 
+                style={{paddingRight: '10px'}} 
+                htmlFor="schema-select">Choose a schema version: </label>
+              <select 
                   id="schema-select"
                   value={selectedSchema?.name_n_version || ''}
                   onChange={(e) => {
@@ -277,7 +299,7 @@ function App() {
                   }}
               >
                   <option value="" disabled>
-                      Select a schema
+                      Select a schema version
                   </option>
                   {schemaList.map((s) => (
                       <option key={s.name_n_version} value={s.name_n_version}>
@@ -341,7 +363,5 @@ function App() {
     </div>
   );
 }
-
-
 
 export default App;
