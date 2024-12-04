@@ -165,7 +165,7 @@ function App() {
   
     // Handle "allOf"
     if (Array.isArray(schema.allOf)) {
-      schema.allOf.forEach((subSchema, index) => {
+      schema.allOf.forEach((subSchema: any, index: number) => {
         const subKey = `${parentKey}_allOf_${index}`;
         tocItems.push(...generateToC(subSchema, formData, subKey));
       });
