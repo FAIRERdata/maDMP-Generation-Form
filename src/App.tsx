@@ -24,7 +24,8 @@ function App() {
 
   // Fetch intro HTML dynamically
   useEffect(() => {
-    fetch('/intro.html')
+    const intro_path = "https://raw.githubusercontent.com/FAIRERdata/maDMP-Generation-Form/refs/heads/master/public/intro.html"
+    fetch(intro_path)
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch intro content');
@@ -38,7 +39,7 @@ function App() {
         console.error(error);
       });
   }, []);
-
+  
   // fetch schema metadata
   useEffect(() => {
     fetch(metaDataUrl)
