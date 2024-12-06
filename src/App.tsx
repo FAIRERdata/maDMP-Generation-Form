@@ -13,6 +13,7 @@ function App() {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [introHtml, setIntroHtml] = useState<string | null>(null);
 
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
@@ -21,6 +22,24 @@ function App() {
   const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/PublishedSchemas/';
   const metaDataUrl = folder_path + 'schema_metadata.json';
 
+  // Fetch intro HTML dynamically
+  useEffect(() => {
+    fetch('/intro.html')
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch intro content');
+        }
+        return response.text();
+      })
+      .then((html) => {
+        setIntroHtml(html);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  // fetch schema metadata
   useEffect(() => {
     fetch(metaDataUrl)
       .then((res) => res.json())
@@ -34,6 +53,7 @@ function App() {
       });
   }, [metaDataUrl]);
 
+  // Fetch schema and uiSchema when selectedSchema changes
   useEffect(() => {
     if (!selectedSchema) return;
 
@@ -269,26 +289,9 @@ function App() {
       {/* Top Content Section */}
       <div className="top-content">
         <div className='top-content-container'>
-          <h1 id="title">maDMP-Generation-Form</h1>
-          <p>
-            maDMP-Generation-Tool is a tool to generate maDMPs for your research data.
-            It is an implementation based on the{' '}
-            <a href="https://fairerdata.github.io/maDMP-Standard/">maDMP-Standard</a>.
-          </p>
-          <p>
-            Creating a new DMP:          
-            <ul>
-              <li>Choose your desired maDMP version</li>
-              <li>Create a new maDMP</li>
-              <li>Validate your maDMP using the validation button at the bottom</li>
-              <li>Save your maDMP by downloading as a JSON file</li>
-              <li>Print the form to save it as human readable format</li>
-            </ul>
-            Editing an existing DMP:
-            <ul>
-              <li>Upload a JSON file to edit an existing maDMP using the choose file button</li>
-            </ul>
-          </p>
+          {/* Top Content Section */}
+          <div dangerouslySetInnerHTML={{ __html: introHtml || '<p>Loading...</p>' }} />
+          
           {/* Open Modal Button */}
           <p>
             <a href="#" onClick={(e) => {
