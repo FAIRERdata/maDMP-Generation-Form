@@ -6,8 +6,8 @@ import Modal from './Modal'; // Import the modal component
 import ModalContent from './ModalContent'; // Import the modal content component
 
 function App() {
-  const [schemaList, setSchemaList] = useState<{ name_n_version: string; schema: string; uischema: string; toc: string  }[]>([]);
-  const [selectedSchema, setSelectedSchema] = useState<{ name_n_version: string; schema: string; uischema: string; toc: string } | null>(null);
+  const [schemaList, setSchemaList] = useState<{ name_n_version: string; schema_path: string; uischema_path: string; toc: string  }[]>([]);
+  const [selectedSchema, setSelectedSchema] = useState<{ name_n_version: string; schema_path: string; uischema_path: string; toc: string } | null>(null);
   const [schema, setSchema] = useState({});
   const [uiSchema, setUiSchema] = useState({});
   const [formData, setFormData] = useState({});
@@ -19,10 +19,10 @@ function App() {
   const closeModal = () => setModalOpen(false);
 
   const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/PublishedSchemas/';
-  const schemasUrl = folder_path + 'schema_metadata.json';
+  const metaDataUrl = folder_path + 'schema_metadata.json';
 
   useEffect(() => {
-    fetch(schemasUrl)
+    fetch(metaDataUrl)
       .then((res) => res.json())
       .then((data) => {
         setSchemaList(data);
@@ -32,7 +32,7 @@ function App() {
         console.error(err);
         setError('Failed to load schema metadata.');
       });
-  }, [schemasUrl]);
+  }, [metaDataUrl]);
 
   useEffect(() => {
     if (!selectedSchema) return;
@@ -40,8 +40,8 @@ function App() {
     setLoading(true);
     setError(null);
 
-    const schemaUrl = folder_path + selectedSchema.schema;
-    const uiSchemaUrl = folder_path + selectedSchema.uischema;
+    const schemaUrl = folder_path + selectedSchema.schema_path;
+    const uiSchemaUrl = folder_path + selectedSchema.uischema_path;
 
     Promise.all([fetch(schemaUrl).then((res) => res.json()), fetch(uiSchemaUrl).then((res) => res.json())])
       .then(([schemaData, uiSchemaData]) => {
@@ -182,8 +182,40 @@ function App() {
       }
     }
   
+    // Handle nested arrays
+    if (schema.type === 'array' && schema.items) {
+      const nestedData = Array.isArray(formData) ? formData : [];
+      tocItems.push(
+        ...nestedData.map((item: any, index: number) => {
+          const arrayKey = `${parentKey}_${index}`;
+          return (
+            <li key={arrayKey}>
+              <a
+                href={`#${arrayKey}`}
+                className="toc-link"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const nestedList = e.currentTarget.nextElementSibling;
+                  if (nestedList) {
+                    nestedList.classList.toggle('show');
+                  }
+                  setTimeout(() => {
+                    window.location.hash = arrayKey;
+                  }, 100);
+                }}
+              >
+                {`Item [${index + 1}]`}
+              </a>
+              {generateToC(schema.items, item, arrayKey)}
+            </li>
+          );
+        })
+      );
+    }
+  
     return tocItems;
   };
+  
   
   // Helper function to evaluate "if" conditions
   const evaluateCondition = (condition: any, formData: any): boolean => {
@@ -292,10 +324,10 @@ function App() {
                   id="schema-select"
                   value={selectedSchema?.name_n_version || ''}
                   onChange={(e) => {
-                      const selected = schemaList.find(
-                          (s) => s.name_n_version === e.target.value
-                      );
-                      if (selected) setSelectedSchema(selected);
+                    const selected = schemaList.find(
+                        (s) => s.name_n_version === e.target.value
+                    );
+                    if (selected) setSelectedSchema(selected);
                   }}
               >
                   <option value="" disabled>
