@@ -6,8 +6,8 @@ import Modal from './Modal'; // Import the modal component
 import ModalContent from './ModalContent'; // Import the modal content component
 
 function App() {
-  const [schemaList, setSchemaList] = useState<{ name_n_version: string; schema_path: string; uischema_path: string; toc: string  }[]>([]);
-  const [selectedSchema, setSelectedSchema] = useState<{ name_n_version: string; schema_path: string; uischema_path: string; toc: string } | null>(null);
+  const [schemaList, setSchemaList] = useState<{ name_n_version: string; schema_path: string; uischema_path: string}[]>([]);
+  const [selectedSchema, setSelectedSchema] = useState<{ name_n_version: string; schema_path: string; uischema_path: string} | null>(null);
   const [schema, setSchema] = useState({});
   const [uiSchema, setUiSchema] = useState({});
   const [formData, setFormData] = useState({});
@@ -62,14 +62,26 @@ function App() {
     setError(null);
 
     const schemaUrl = folder_path + selectedSchema.schema_path;
-    const uiSchemaUrl = folder_path + selectedSchema.uischema_path;
 
-    Promise.all([fetch(schemaUrl).then((res) => res.json()), fetch(uiSchemaUrl).then((res) => res.json())])
+    // Only fetch uiSchema if "uischema_path" is not empty
+    const uiSchemaUrl = selectedSchema.uischema_path
+      ? folder_path + selectedSchema.uischema_path
+      : null;
+
+    // Fetch schema and optionally uiSchema
+    Promise.all([
+      fetch(schemaUrl).then((res) => res.json()),
+      uiSchemaUrl ? fetch(uiSchemaUrl).then((res) => res.json()) : Promise.resolve({}),
+    ])
       .then(([schemaData, uiSchemaData]) => {
         // Preprocess schema to modify titles
         const processedSchema = preprocessSchema(schemaData);
 
-        uiSchemaData['ui:submitButtonOptions'] = { submitText: 'Validate' };
+        // Ensure the submit button text is set even if uiSchema is empty
+        if (!uiSchemaData['ui:submitButtonOptions']) {
+          uiSchemaData['ui:submitButtonOptions'] = { submitText: 'Validate' };
+        }
+
         setSchema(processedSchema);
         setUiSchema(uiSchemaData);
         setLoading(false);
@@ -80,6 +92,7 @@ function App() {
         setLoading(false);
       });
   }, [selectedSchema]);
+
 
   // Helper function to preprocess schema
   const preprocessSchema = (schema: any): any => {
@@ -328,9 +341,11 @@ function App() {
                   id="schema-select"
                   value={selectedSchema?.name_n_version || ''}
                   onChange={(e) => {
+                    console.log("Selected value:", e.target.value); // Debug log, they are needed because the value is not updated immediately
                     const selected = schemaList.find(
                         (s) => s.name_n_version === e.target.value
                     );
+                    console.log("Found schema:", selected); // Debug log
                     if (selected) setSelectedSchema(selected);
                   }}
               >
