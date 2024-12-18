@@ -131,7 +131,7 @@ function App() {
     return schema;
   };
   
-  
+  // function to generate Table of Contents
   const generateToC = (schema: any, formData: any, parentKey: string = 'root'): JSX.Element[] => {
     if (!schema || typeof schema !== 'object') return [];
   
