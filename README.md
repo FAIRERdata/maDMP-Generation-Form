@@ -73,7 +73,7 @@ To deploy the application to GitHub Pages, run:
 
 
 ## Update Form Schemas
-This tool automatically fetches the schema metadata from [this github folder](https://github.com/FAIRERdata/maDMP-Standard/blob/Master/examples/JSON/PublishedSchemas). To add or delete schemas choices in the webform, you need to add or delete corresponding information in the metadata
+This tool automatically fetches the schema metadata from [this github folder](https://github.com/FAIRERdata/maDMP-Standard/blob/Master/examples/JSON/PublishedSchemas). To add or delete schemas choices in the webform, you need to add or delete corresponding information in the [schema_metadata file](https://github.com/FAIRERdata/maDMP-Standard/blob/Master/examples/JSON/PublishedSchemas/schema_metadata.json).
 
 To create your own version of GCWG-RDA-maDMP schema, following the instructions in this [README file](https://github.com/FAIRERdata/maDMP-Standard/tree/Master/examples/JSON/GCWG-RDA-maDMP%20JSON-schema)
 
