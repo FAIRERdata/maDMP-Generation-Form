@@ -374,11 +374,13 @@ function App() {
           {/* Modal Component */}
           <Modal isOpen={isModalOpen} onClose={closeModal}>
             <div dangerouslySetInnerHTML={{ __html: modalContentHtml || '<p>Loading...</p>' }} />
+            <button type="button" className="btn" onClick={closeModal}>Close</button>
           </Modal>
 
           {/* Disclaimer Modal Component */}
           <Modal isOpen={isDisclaimerOpen} onClose={closeDisclaimer}>
             <div dangerouslySetInnerHTML={{ __html: disclaimerContentHtml || '<p>Loading...</p>' }} />
+            <button type="button" className="btn" onClick={closeDisclaimer}>Close</button>
           </Modal>
         </div>
       </div>
