@@ -85,9 +85,9 @@ The part above the form is the intro part. It is fetched and generated dynamical
 To view the author statement, click on the "Author Statement" link in the application. This will open a modal with detailed information about the authors.
 
 ### Update Author Statement
-The author statement is fetched and generated dynamically. To change it, you only need to modify the [authorStatement.html](https://github.com/FAIRERdata/maDMP-Generation-Form/blob/master/public/authorStatement.html) file.
+The author statement is fetched and generated dynamically. To change its content, you only need to modify the [authorStatement.html](https://github.com/FAIRERdata/maDMP-Generation-Form/blob/master/public/authorStatement.html) file.
 
 ## Update Disclaimer
-The disclamier popup is also fetched and generated dynamically. To change it, you only need to modify the [disclaimer.html](https://github.com/FAIRERdata/maDMP-Generation-Form/blob/master/public/disclaimer.html)
+The disclaimer popup is also fetched and generated dynamically. To change its content, you only need to modify the [disclaimer.html](https://github.com/FAIRERdata/maDMP-Generation-Form/blob/master/public/disclaimer.html)
 
 
