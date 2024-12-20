@@ -460,6 +460,14 @@ function App() {
           >
               Download JSON
           </button>
+          <button
+              type="button"
+              className="btn btn-info"
+              style={{ marginTop: '10px' }}
+              onClick={() => window.print()}
+          >
+              Print Page
+          </button>
           <input
               type="file"
               accept=".json"
