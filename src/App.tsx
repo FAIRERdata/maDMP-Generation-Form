@@ -361,11 +361,13 @@ function App() {
               Author Statement
               <i className="fa fa-long-arrow-left"></i>
             </a>
-
+          </p>
+          <p>
+            Released under MIT License
             <a href="#" onClick={(e) => {
               e.preventDefault();
               openDisclaimer();
-            }}>
+            }} style={{marginLeft: '15px'}}>
               Disclaimer
               <i className="fa fa-long-arrow-left"></i>
             </a>
