@@ -81,9 +81,11 @@ To create your own version of GCWG-RDA-maDMP schema, following the instructions 
 ## Update Form Intro Part
 The part above the form is the intro part. It is fetched and generated dynamically. To modify the intro part, you should modify the [intro.html](https://github.com/FAIRERdata/maDMP-Generation-Form/blob/master/public/intro.html) file.
 
-
 ## Author Statement
 To view the author statement, click on the "Author Statement" link in the application. This will open a modal with detailed information about the authors.
+
+## Update From Author Statement
+The author statement is also fetched and generated dynamically. To change it, you only need to modify the [modalContent.html](https://github.com/FAIRERdata/maDMP-Generation-Form/blob/master/public/modalContent.html) file.
 
 
 
