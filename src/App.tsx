@@ -14,10 +14,15 @@ function App() {
   const [error, setError] = useState<string | null>(null);
   const [introHtml, setIntroHtml] = useState<string | null>(null);
   const [modalContentHtml, setModalContentHtml] = useState<string | null>(null); // New state for modal content
+  const [disclaimerContentHtml, setDisclaimerContentHtml] = useState<string | null>(null); // New state for disclaimer content
 
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
+
+  const [isDisclaimerOpen, setDisclaimerOpen] = useState(false);
+  const openDisclaimer = () => setDisclaimerOpen(true);
+  const closeDisclaimer = () => setDisclaimerOpen(false);
 
   const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/examples/JSON/PublishedSchemas/';
   const metaDataUrl = folder_path + 'schema_metadata.json';
@@ -42,7 +47,7 @@ function App() {
 
   // Fetch modal content HTML dynamically
   useEffect(() => {
-    const modalContentPath = "https://raw.githubusercontent.com/FAIRERdata/maDMP-Generation-Form/refs/heads/master/public/modalContent.html"
+    const modalContentPath = "https://raw.githubusercontent.com/FAIRERdata/maDMP-Generation-Form/refs/heads/master/public/authorStatement.html"
     fetch(modalContentPath)
       .then((response) => {
         if (!response.ok) {
@@ -52,6 +57,24 @@ function App() {
       })
       .then((html) => {
         setModalContentHtml(html);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  // Fetch disclaimer content HTML dynamically
+  useEffect(() => {
+    const disclaimerContentPath = "https://raw.githubusercontent.com/FAIRERdata/maDMP-Generation-Form/refs/heads/master/public/disclaimer.html"
+    fetch(disclaimerContentPath)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch disclaimer content');
+        }
+        return response.text();
+      })
+      .then((html) => {
+        setDisclaimerContentHtml(html);
       })
       .catch((error) => {
         console.error(error);
@@ -328,8 +351,8 @@ function App() {
           <p>
             <a href="https://www.niso.org/press-releases/contributor-roles-taxonomy-credit-formalized-ansiniso-standard" target="_blank">
               CRediT 
+              <i className="fa fa-external-link"></i>
             </a>
-            <i className="fa fa-external-link"></i>
 
             <a href="#" onClick={(e) => {
               e.preventDefault();
@@ -339,11 +362,24 @@ function App() {
               <i className="fa fa-long-arrow-left"></i>
             </a>
 
-            {/* Modal Component */}
-            <Modal isOpen={isModalOpen} onClose={closeModal}>
-              <div dangerouslySetInnerHTML={{ __html: modalContentHtml || '<p>Loading...</p>' }} />
-            </Modal>
+            <a href="#" onClick={(e) => {
+              e.preventDefault();
+              openDisclaimer();
+            }}>
+              Disclaimer
+              <i className="fa fa-long-arrow-left"></i>
+            </a>
           </p>
+
+          {/* Modal Component */}
+          <Modal isOpen={isModalOpen} onClose={closeModal}>
+            <div dangerouslySetInnerHTML={{ __html: modalContentHtml || '<p>Loading...</p>' }} />
+          </Modal>
+
+          {/* Disclaimer Modal Component */}
+          <Modal isOpen={isDisclaimerOpen} onClose={closeDisclaimer}>
+            <div dangerouslySetInnerHTML={{ __html: disclaimerContentHtml || '<p>Loading...</p>' }} />
+          </Modal>
         </div>
       </div>
 
