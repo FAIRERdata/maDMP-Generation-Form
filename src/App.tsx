@@ -466,7 +466,7 @@ function App() {
               style={{ marginTop: '10px' }}
               onClick={() => window.print()}
           >
-              Print Page
+              Download PDF
           </button>
           <input
               type="file"
