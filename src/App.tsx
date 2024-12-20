@@ -326,11 +326,17 @@ function App() {
           
           {/* Open Modal Button */}
           <p>
+            <a href="https://www.niso.org/press-releases/contributor-roles-taxonomy-credit-formalized-ansiniso-standard" target="_blank">
+              CRediT 
+            </a>
+            <i className="fa fa-external-link"></i>
+
             <a href="#" onClick={(e) => {
               e.preventDefault();
               openModal();
             }}>
               Author Statement
+              <i className="fa fa-long-arrow-left"></i>
             </a>
 
             {/* Modal Component */}

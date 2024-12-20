@@ -207,3 +207,9 @@ input[type='file'] {
     grid-row: auto; /* Stack rows */
   }
 }
+
+.fa-external-link, .fa-long-arrow-left {
+  color: #2795c8;
+  margin-right: 5px;
+  margin-left: 1px;
+}
