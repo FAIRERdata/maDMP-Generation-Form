@@ -90,4 +90,12 @@ The author statement is fetched and generated dynamically. To change it, you onl
 ## Update Disclaimer
 The disclamier popup is also fetched and generated dynamically. To change it, you only need to modify the [disclaimer.html](https://github.com/FAIRERdata/maDMP-Generation-Form/blob/master/public/disclaimer.html)
 
+## To DOs
+1.	Dynamic Table of Contents (TOC):
+ -  The TOC is dynamically generated based on the formData, which is derived from the JSON schema.
+ - However, the order of some fields is inaccurate due to the handling of dependencies with the allOf keyword in the JSON schema. The allOf keyword, often used for merging dependencies, is placed at the end, and thus the fields in allOf are placed last, which does not always align with the original Orange Tab ordering.
+2.	HTML Links in Descriptions:
+ Some JSON schema descriptions contain HTML links, but these are currently rendered as plain text rather than clickable HTML elements in the form. My attemps to solve this problem is in [CustomFieldTemplate](https://github.com/FAIRERdata/maDMP-Generation-Form/blob/master/src/utilities/CustomFieldTemplate.tsx)
+
+
 
