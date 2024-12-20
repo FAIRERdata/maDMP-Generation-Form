@@ -3,7 +3,6 @@ import Form, { IChangeEvent } from '@rjsf/core';
 import validator from '@rjsf/validator-ajv8';
 import './App.css';
 import Modal from './Modal'; // Import the modal component
-import ModalContent from './ModalContent'; // Import the modal content component
 
 function App() {
   const [schemaList, setSchemaList] = useState<{ name_n_version: string; schema_path: string; uischema_path: string}[]>([]);
@@ -14,6 +13,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [introHtml, setIntroHtml] = useState<string | null>(null);
+  const [modalContentHtml, setModalContentHtml] = useState<string | null>(null); // New state for modal content
 
   const [isModalOpen, setModalOpen] = useState(false);
   const openModal = () => setModalOpen(true);
@@ -34,6 +34,24 @@ function App() {
       })
       .then((html) => {
         setIntroHtml(html);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  }, []);
+
+  // Fetch modal content HTML dynamically
+  useEffect(() => {
+    const modalContentPath = "https://raw.githubusercontent.com/FAIRERdata/maDMP-Generation-Form/refs/heads/master/public/modalContent.html"
+    fetch(modalContentPath)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch modal content');
+        }
+        return response.text();
+      })
+      .then((html) => {
+        setModalContentHtml(html);
       })
       .catch((error) => {
         console.error(error);
@@ -317,7 +335,7 @@ function App() {
 
             {/* Modal Component */}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-              <ModalContent onClose={closeModal} /> {/* Pass closeModal as a prop */}
+              <div dangerouslySetInnerHTML={{ __html: modalContentHtml || '<p>Loading...</p>' }} />
             </Modal>
           </p>
         </div>
