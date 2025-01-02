@@ -24,7 +24,7 @@ function App() {
   const openDisclaimer = () => setDisclaimerOpen(true);
   const closeDisclaimer = () => setDisclaimerOpen(false);
 
-  const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/JSON/PublishedSchemas/';
+  const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/blob/Master/JSON/PublishedSchemas/';
   const metaDataUrl = folder_path + 'schema_metadata.json';
 
   // Fetch intro HTML dynamically
