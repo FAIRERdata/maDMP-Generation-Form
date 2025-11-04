@@ -139,6 +139,11 @@ function App() {
   const preprocessSchema = (schema: any): any => {
     if (!schema || typeof schema !== 'object') return schema;
   
+    // Convert "url" type to "uri" for RJSF compatibility
+  if (schema.type === 'url') {
+    schema.type = 'uri';
+  }  
+    
     // Process "allOf" structures
     if (schema.allOf && Array.isArray(schema.allOf)) {
       schema.allOf = schema.allOf.map(preprocessSchema); // Process each subschema
