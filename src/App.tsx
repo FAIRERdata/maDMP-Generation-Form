@@ -10,7 +10,6 @@ function App() {
   const [schema, setSchema] = useState({});
   const [uiSchema, setUiSchema] = useState({});
   const [formData, setFormData] = useState({});
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [introHtml, setIntroHtml] = useState<string | null>(null);
   const [modalContentHtml, setModalContentHtml] = useState<string | null>(null); // New state for modal content
@@ -24,7 +23,7 @@ function App() {
   const openDisclaimer = () => setDisclaimerOpen(true);
   const closeDisclaimer = () => setDisclaimerOpen(false);
 
-  const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/blob/Master/JSON/PublishedSchemas/';
+  const folder_path = 'https://raw.githubusercontent.com/FAIRERdata/maDMP-Standard/Master/JSON/PublishedSchemas/';
   const metaDataUrl = folder_path + 'schema_metadata.json';
 
   // Fetch intro HTML dynamically
@@ -99,7 +98,6 @@ function App() {
   useEffect(() => {
     if (!selectedSchema) return;
 
-    setLoading(true);
     setError(null);
 
     const schemaUrl = folder_path + selectedSchema.schema_path;
@@ -125,18 +123,16 @@ function App() {
 
         setSchema(processedSchema);
         setUiSchema(uiSchemaData);
-        setLoading(false);
       })
       .catch((err) => {
         console.error(err);
         setError('Failed to load schema.');
-        setLoading(false);
       });
-  }, [selectedSchema]);
+  }, [selectedSchema, folder_path]);
 
 
   // Helper function to preprocess schema
-  const preprocessSchema = (schema: any): any => {
+  const preprocessSchema = (schema: Record<string, unknown>): Record<string, unknown> => {
     if (!schema || typeof schema !== 'object') return schema;
 
     // Convert "url" type to "uri" for RJSF compatibility
@@ -144,41 +140,57 @@ function App() {
       schema.type = 'uri';
     }
 
-    // Process "allOf" structures
-    if (schema.allOf && Array.isArray(schema.allOf)) {
-      schema.allOf = schema.allOf.map(preprocessSchema);
+    if (schema.format === 'url') {
+      schema.format = 'uri';
     }
 
-    // Process "if-then" structures
+    // Process arrays with proper typing
+    if (schema.allOf && Array.isArray(schema.allOf)) {
+      schema.allOf = schema.allOf.map((item) => preprocessSchema(item as Record<string, unknown>));
+    }
+
+    if (schema.anyOf && Array.isArray(schema.anyOf)) {
+      schema.anyOf = schema.anyOf.map((item) => preprocessSchema(item as Record<string, unknown>));
+    }
+
+    if (schema.oneOf && Array.isArray(schema.oneOf)) {
+      schema.oneOf = schema.oneOf.map((item) => preprocessSchema(item as Record<string, unknown>));
+    }
+
+    // Process conditional schemas
     if (schema.if) {
-      schema.if = preprocessSchema(schema.if);
+      schema.if = preprocessSchema(schema.if as Record<string, unknown>);
     }
     if (schema.then) {
-      schema.then = preprocessSchema(schema.then);
+      schema.then = preprocessSchema(schema.then as Record<string, unknown>);
+    }
+    if (schema.else) {
+      schema.else = preprocessSchema(schema.else as Record<string, unknown>);
     }
 
-    // Update "title" with "question" if both exist
+    // Update title with question
     if (schema.title && schema.question) {
       schema.title = `${schema.question} [${schema.title}]`;
     }
 
-    // Recursively process properties
-    if (schema.properties) {
+    // Process properties
+    if (schema.properties && typeof schema.properties === 'object') {
       Object.keys(schema.properties).forEach((key) => {
-        schema.properties[key] = preprocessSchema(schema.properties[key]);
+        const prop = (schema.properties as Record<string, unknown>)[key];
+        (schema.properties as Record<string, unknown>)[key] = preprocessSchema(prop as Record<string, unknown>);
       });
     }
 
-    // Process "items" if it's an array
+    // Process array items
     if (schema.type === 'array' && schema.items) {
-      schema.items = preprocessSchema(schema.items);
+      schema.items = preprocessSchema(schema.items as Record<string, unknown>);
     }
 
     return schema;
   };
   
   // function to generate Table of Contents
-  const generateToC = (schema: any, formData: any, parentKey: string = 'root'): JSX.Element[] => {
+  const generateToC = (schema: Record<string, unknown>, formData: Record<string, unknown>, parentKey: string = 'root'): JSX.Element[] => {
     if (!schema || typeof schema !== 'object') return [];
   
     const tocItems: JSX.Element[] = [];
@@ -298,7 +310,7 @@ function App() {
   
   
   // Helper function to evaluate "if" conditions
-  const evaluateCondition = (condition: any, formData: any): boolean => {
+  const evaluateCondition = (condition: Record<string, unknown>, formData: Record<string, unknown>): boolean => {
     if (!condition || !formData) return false;
     // Implement basic checks for "properties" or "enum"
     if (condition.properties) {
@@ -327,7 +339,7 @@ function App() {
         try {
           const json = JSON.parse(e.target?.result as string);
           setFormData(json);
-        } catch (error) {
+        } catch {
           alert('Invalid JSON file.');
         }
       };
