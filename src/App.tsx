@@ -138,17 +138,17 @@ function App() {
   // Helper function to preprocess schema
   const preprocessSchema = (schema: any): any => {
     if (!schema || typeof schema !== 'object') return schema;
-  
+
     // Convert "url" type to "uri" for RJSF compatibility
-  if (schema.type === 'url') {
-    schema.type = 'uri';
-  }  
-    
+    if (schema.type === 'url') {
+      schema.type = 'uri';
+    }
+
     // Process "allOf" structures
     if (schema.allOf && Array.isArray(schema.allOf)) {
-      schema.allOf = schema.allOf.map(preprocessSchema); // Process each subschema
+      schema.allOf = schema.allOf.map(preprocessSchema);
     }
-  
+
     // Process "if-then" structures
     if (schema.if) {
       schema.if = preprocessSchema(schema.if);
@@ -156,24 +156,24 @@ function App() {
     if (schema.then) {
       schema.then = preprocessSchema(schema.then);
     }
-  
+
     // Update "title" with "question" if both exist
     if (schema.title && schema.question) {
       schema.title = `${schema.question} [${schema.title}]`;
     }
-  
+
     // Recursively process properties
     if (schema.properties) {
       Object.keys(schema.properties).forEach((key) => {
         schema.properties[key] = preprocessSchema(schema.properties[key]);
       });
     }
-  
+
     // Process "items" if it's an array
     if (schema.type === 'array' && schema.items) {
       schema.items = preprocessSchema(schema.items);
     }
-  
+
     return schema;
   };
   
